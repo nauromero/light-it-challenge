@@ -9,6 +9,11 @@ export interface Patient {
   website: string;
 }
 
+export type EditablePatientFields = Pick<
+  Patient,
+  'name' | 'avatar' | 'description' | 'website'
+>;
+
 export interface ApiError {
   message: string;
 }
