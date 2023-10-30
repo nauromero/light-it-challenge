@@ -2,46 +2,68 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
-import { fetchPatients } from '../../redux/thunks/patientsThunks';
-import { PatientsState, Patient } from '../../redux/slices/patientsSlice';
+import {
+  fetchPatients,
+  addPatient,
+  editPatient,
+} from '../../redux/thunks/patientsThunks';
+import { Patient, EditablePatientFields } from '../../redux/slices/patientsSlice';
 import { RootState } from 'redux/rootReducer';
 import PatientCard from '../PatientCard/PatientCard';
-import { Typography, List, ListItem, Divider } from '@mui/material';
+import { Typography, ListItem, CircularProgress, Button } from '@mui/material';
+import { StyledList, Container, LoaderContainer } from './styles';
+import { TEXT_CONSTANTS } from '../patientCardTexts';
+import PatientsModal from '../PatientsModal/PatientsModal';
 
 const PatientsList: React.FC = () => {
-  const dispatch =
-    useDispatch<ThunkDispatch<PatientsState, unknown, AnyAction>>();
+  const [isAddPatientModalOpen, setIsAddPatientModalOpen] = useState(false);
+  const dispatch = useDispatch<ThunkDispatch<RootState, unknown, AnyAction>>();
+
   const patientsDataFromSelector = useSelector(
     (state: RootState) => state.patients
   );
-  const [patientsData, setPatientsData] = useState<Patient[]>(
-    patientsDataFromSelector.patients || []
-  );
 
   useEffect(() => {
-    dispatch(fetchPatients()).then(() => {
-      setPatientsData(patientsDataFromSelector.patients || []);
-    });
-  }, [dispatch, patientsDataFromSelector.patients]);
+    dispatch(fetchPatients());
+  }, [dispatch]);
 
-  const handleSave = (updatedPatient: Patient) => {
-    const updatedPatients = patientsData.map((patient) =>
-      patient.id === updatedPatient.id ? updatedPatient : patient
-    );
-    setPatientsData(updatedPatients);
+  const handleSave = (updatedPatient: EditablePatientFields) => {
+    dispatch(editPatient(updatedPatient));
+  };
+
+  const handleAdd = (newPatient: Patient) => {
+    dispatch(addPatient(newPatient));
   };
 
   return (
-    <div>
+    <Container>
       <Typography variant='h3'>Patients List</Typography>
-      <List>
-        {patientsData.map((patient) => (
-          <ListItem key={patient.id}>
-            <PatientCard patient={patient} onSave={handleSave} />
-          </ListItem>
-        ))}
-      </List>
-    </div>
+      <Button
+        onClick={() => {
+          setIsAddPatientModalOpen(true);
+        }}>
+        {TEXT_CONSTANTS.ADD}
+      </Button>
+      {patientsDataFromSelector.loading ? (
+        <LoaderContainer>
+          <CircularProgress />
+        </LoaderContainer>
+      ) : (
+        <StyledList>
+          {patientsDataFromSelector.patients.map((patient) => (
+            <ListItem key={patient.id}>
+              <PatientCard patient={patient} onSave={handleSave} />
+            </ListItem>
+          ))}
+        </StyledList>
+      )}
+      <PatientsModal
+        mode={TEXT_CONSTANTS.ADD}
+        isModalOpen={isAddPatientModalOpen}
+        setIsModalOpen={setIsAddPatientModalOpen}
+        onSubmit={() => handleAdd}
+      />
+    </Container>
   );
 };
 

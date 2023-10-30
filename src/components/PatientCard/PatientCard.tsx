@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
 import {
   Button,
   Card,
@@ -8,14 +7,12 @@ import {
   Typography,
   Link,
   Collapse,
-  Modal,
-  TextField,
 } from '@mui/material';
 import { Patient, EditablePatientFields } from 'redux/slices/patientsSlice';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { patientSchema } from './patientSchema';
-import { TEXT_CONSTANTS } from './patientCardTexts';
+
+import { TEXT_CONSTANTS } from '../patientCardTexts';
 import { formatDate } from 'helpers/helpers';
+import PatientsModal from '../PatientsModal/PatientsModal';
 
 interface PatientCardProps {
   patient: Patient;
@@ -25,16 +22,6 @@ interface PatientCardProps {
 const PatientCard: React.FC<PatientCardProps> = ({ patient, onSave }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<EditablePatientFields>({
-    defaultValues: patient,
-    resolver: yupResolver(patientSchema) as any,
-  });
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -60,7 +47,6 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient, onSave }) => {
 
         <Button
           onClick={() => {
-            reset(patient);
             setIsModalOpen(true);
           }}>
           {TEXT_CONSTANTS.EDIT}
@@ -79,78 +65,13 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient, onSave }) => {
           </Link>
         </Collapse>
 
-        <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <div
-            style={{
-              padding: '20px',
-              background: 'white',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}>
-            <Typography variant='h5'>{TEXT_CONSTANTS.EDIT_PATIENT}</Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Controller
-                name='name'
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={TEXT_CONSTANTS.NAME}
-                    fullWidth
-                    margin='normal'
-                    error={!!errors.name}
-                    helperText={errors.name?.message}
-                  />
-                )}
-              />
-              <Controller
-                name='avatar'
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={TEXT_CONSTANTS.AVATAR_URL}
-                    fullWidth
-                    margin='normal'
-                    error={!!errors.avatar}
-                    helperText={errors.avatar?.message}
-                  />
-                )}
-              />
-              <Controller
-                name='description'
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={TEXT_CONSTANTS.DESCRIPTION}
-                    fullWidth
-                    margin='normal'
-                  />
-                )}
-              />
-              <Controller
-                name='website'
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label={TEXT_CONSTANTS.WEBSITE}
-                    fullWidth
-                    margin='normal'
-                    error={!!errors.website}
-                    helperText={errors.website?.message}
-                  />
-                )}
-              />
-              <Button type='submit' variant='contained' color='primary'>
-                {TEXT_CONSTANTS.SAVE}
-              </Button>
-            </form>
-          </div>
-        </Modal>
+        <PatientsModal
+          mode={TEXT_CONSTANTS.EDIT}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          onSubmit={onSubmit}
+          patient={patient}
+        />
       </CardContent>
       <CardMedia
         component='img'

@@ -9,4 +9,5 @@ export const TEXT_CONSTANTS = {
   HIDE_DETAILS: 'Hide Details',
   CREATED_AT: 'Created at:',
   EDIT: 'Edit',
+  ADD: 'Add new patient',
 };

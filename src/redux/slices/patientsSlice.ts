@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
+//fix later
 export interface Patient {
   avatar: string;
   createdAt: string;
@@ -46,16 +46,35 @@ const patientsSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    addPatient: (state, action: PayloadAction<Patient>) => {
-      state.patients.push(action.payload);
+    addPatientStart: (state) => {
+      state.loading = true;
+      state.error = null;
     },
-    editPatient: (state, action: PayloadAction<Patient>) => {
+    addPatientSuccess: (state, { payload }) => {
+      state.loading = false;
+      state.patients.push(payload);
+    },
+    addPatientFailure: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
+    },
+
+    editPatientStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    editPatientSuccess: (state, { payload }) => {
+      state.loading = false;
       const index = state.patients.findIndex(
-        (patient) => patient.id === action.payload.id
+        (patient) => patient.id === payload.id
       );
       if (index !== -1) {
-        state.patients[index] = action.payload;
+        state.patients[index] = payload;
       }
+    },
+    editPatientFailure: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
     },
   },
 });
@@ -64,8 +83,12 @@ export const {
   fetchPatientsStart,
   fetchPatientsSuccess,
   fetchPatientsFailure,
-  addPatient,
-  editPatient,
+  addPatientStart,
+  addPatientSuccess,
+  addPatientFailure,
+  editPatientStart,
+  editPatientSuccess,
+  editPatientFailure,
 } = patientsSlice.actions;
 
 export default patientsSlice.reducer;
