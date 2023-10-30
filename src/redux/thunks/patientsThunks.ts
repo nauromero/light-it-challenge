@@ -10,14 +10,11 @@ import {
   editPatientStart,
   editPatientSuccess,
   editPatientFailure,
-  Patient,
-  ApiError,
-  EditablePatientFields,
 } from '../slices/patientsSlice';
 
-// fix later
+import { PatientType, ApiErrorType, EditablePatientFields } from 'types';
 
-export const fetchPatients = createAsyncThunk<Patient[], void>(
+export const fetchPatients = createAsyncThunk<PatientType[], void>(
   'patients/fetchPatients',
   async (_, { dispatch }) => {
     try {
@@ -30,7 +27,7 @@ export const fetchPatients = createAsyncThunk<Patient[], void>(
       return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
-        const err: ApiError = {
+        const err: ApiErrorType = {
           message: error.message,
         };
         dispatch(fetchPatientsFailure(err));
@@ -43,11 +40,13 @@ export const fetchPatients = createAsyncThunk<Patient[], void>(
 );
 
 export const addPatient =
-  (newPatient: Patient): AppThunk =>
+  (newPatient: PatientType): AppThunk =>
   async (dispatch) => {
     try {
       dispatch(addPatientStart());
-      dispatch(addPatientSuccess(newPatient));
+      setTimeout(() => {
+        dispatch(addPatientSuccess(newPatient));
+      }, 3000); //setTimeout to simulate a real request and show the loader
     } catch (error: unknown) {
       if (error instanceof Error) {
         dispatch(addPatientFailure(error.toString()));
@@ -62,7 +61,9 @@ export const editPatient =
   async (dispatch) => {
     try {
       dispatch(editPatientStart());
-      dispatch(editPatientSuccess(updatedPatient));
+      setTimeout(() => {
+        dispatch(editPatientSuccess(updatedPatient));
+      }, 3000);
     } catch (error: unknown) {
       if (error instanceof Error) {
         dispatch(editPatientFailure(error.toString()));

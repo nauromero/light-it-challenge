@@ -1,4 +1,4 @@
-export const TEXT_CONSTANTS = {
+export const PATIENTS_CONSTANTS = {
   EDIT_PATIENT: 'Edit Patient',
   NAME: 'Name',
   AVATAR_URL: 'Avatar URL',
@@ -10,4 +10,5 @@ export const TEXT_CONSTANTS = {
   CREATED_AT: 'Created at:',
   EDIT: 'Edit',
   ADD: 'Add new patient',
+  PATIENTS_LIST: 'Patients List'
 };

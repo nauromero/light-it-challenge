@@ -2,19 +2,23 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { patientSchema } from './patientValidationSchema';
-import { Modal, Typography, TextField, Button } from '@mui/material';
+import {
+  Modal,
+  Typography,
+  TextField,
+  Button,
+} from '@mui/material';
 import { Controller } from 'react-hook-form';
-import { TEXT_CONSTANTS } from '../patientCardTexts';
-import { EditablePatientFields, Patient } from 'redux/slices/patientsSlice';
-import { FormWrapper } from './styles'
+import { PATIENTS_CONSTANTS } from '../../constants/patientsConstants';
+import { EditablePatientFields, PatientModalProps } from 'types';
+import { FormWrapper } from './styles';
 
-interface PatientModalProps {
-  mode: string;
-  isModalOpen: boolean;
-  setIsModalOpen: (open: boolean) => void;
-  onSubmit: (data: EditablePatientFields) => void;
-  patient?: Patient;
-}
+const defaultPatientValues = {
+  name: '',
+  avatar: '',
+  description: '',
+  website: '',
+};
 
 const PatientsModal: React.FC<PatientModalProps> = ({
   isModalOpen,
@@ -28,14 +32,14 @@ const PatientsModal: React.FC<PatientModalProps> = ({
     handleSubmit,
     formState: { errors },
   } = useForm<EditablePatientFields>({
-    defaultValues: patient || {},
+    defaultValues: patient || defaultPatientValues,
     resolver: yupResolver(patientSchema) as any,
   });
 
   const title =
-    mode === 'add' ? TEXT_CONSTANTS.ADD : TEXT_CONSTANTS.EDIT_PATIENT;
+    mode === 'add' ? PATIENTS_CONSTANTS.ADD : PATIENTS_CONSTANTS.EDIT_PATIENT;
   const saveButtonText =
-    mode === 'add' ? TEXT_CONSTANTS.ADD : TEXT_CONSTANTS.SAVE;
+    mode === 'add' ? PATIENTS_CONSTANTS.ADD : PATIENTS_CONSTANTS.SAVE;
 
   return (
     <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -48,7 +52,7 @@ const PatientsModal: React.FC<PatientModalProps> = ({
             render={({ field }) => (
               <TextField
                 {...field}
-                label={TEXT_CONSTANTS.NAME}
+                label={PATIENTS_CONSTANTS.NAME}
                 fullWidth
                 margin='normal'
                 error={!!errors.name}
@@ -62,7 +66,7 @@ const PatientsModal: React.FC<PatientModalProps> = ({
             render={({ field }) => (
               <TextField
                 {...field}
-                label={TEXT_CONSTANTS.AVATAR_URL}
+                label={PATIENTS_CONSTANTS.AVATAR_URL}
                 fullWidth
                 margin='normal'
                 error={!!errors.avatar}
@@ -76,7 +80,7 @@ const PatientsModal: React.FC<PatientModalProps> = ({
             render={({ field }) => (
               <TextField
                 {...field}
-                label={TEXT_CONSTANTS.DESCRIPTION}
+                label={PATIENTS_CONSTANTS.DESCRIPTION}
                 fullWidth
                 margin='normal'
               />
@@ -88,7 +92,7 @@ const PatientsModal: React.FC<PatientModalProps> = ({
             render={({ field }) => (
               <TextField
                 {...field}
-                label={TEXT_CONSTANTS.WEBSITE}
+                label={PATIENTS_CONSTANTS.WEBSITE}
                 fullWidth
                 margin='normal'
                 error={!!errors.website}

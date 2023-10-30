@@ -8,18 +8,19 @@ import {
   Link,
   Collapse,
 } from '@mui/material';
-import { Patient, EditablePatientFields } from 'redux/slices/patientsSlice';
+import { PatientType, EditablePatientFields } from '../../types';
 
-import { TEXT_CONSTANTS } from '../patientCardTexts';
+import { PATIENTS_CONSTANTS } from '../../constants/patientsConstants';
 import { formatDate } from 'helpers/helpers';
 import PatientsModal from '../PatientsModal/PatientsModal';
 
 interface PatientCardProps {
-  patient: Patient;
+  patient: PatientType;
   onSave: (updatedPatient: EditablePatientFields) => void;
+  isLoading: boolean;
 }
 
-const PatientCard: React.FC<PatientCardProps> = ({ patient, onSave }) => {
+const PatientCard: React.FC<PatientCardProps> = ({ patient, onSave, isLoading }) => {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -41,32 +42,32 @@ const PatientCard: React.FC<PatientCardProps> = ({ patient, onSave }) => {
 
         <Button onClick={toggleCollapse}>
           {isCollapsed
-            ? TEXT_CONSTANTS.SHOW_DETAILS
-            : TEXT_CONSTANTS.HIDE_DETAILS}
+            ? PATIENTS_CONSTANTS.SHOW_DETAILS
+            : PATIENTS_CONSTANTS.HIDE_DETAILS}
         </Button>
 
         <Button
           onClick={() => {
             setIsModalOpen(true);
           }}>
-          {TEXT_CONSTANTS.EDIT}
+          {PATIENTS_CONSTANTS.EDIT}
         </Button>
 
         <Collapse in={!isCollapsed}>
           <Typography variant='subtitle2'>
-            {TEXT_CONSTANTS.CREATED_AT} {formatDate(patient.createdAt)}
+            {PATIENTS_CONSTANTS.CREATED_AT} {formatDate(patient.createdAt)}
           </Typography>
           <Typography variant='body2'>{patient.description}</Typography>
           <Link
             href={patient.website}
             target='_blank'
             rel='noopener noreferrer'>
-            <Typography variant='body2'>{TEXT_CONSTANTS.WEBSITE}</Typography>
+            <Typography variant='body2'>{PATIENTS_CONSTANTS.WEBSITE}</Typography>
           </Link>
         </Collapse>
 
         <PatientsModal
-          mode={TEXT_CONSTANTS.EDIT}
+          mode={PATIENTS_CONSTANTS.EDIT}
           isModalOpen={isModalOpen}
           setIsModalOpen={setIsModalOpen}
           onSubmit={onSubmit}

@@ -1,30 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-//fix later
-export interface Patient {
-  avatar: string;
-  createdAt: string;
-  description: string;
-  id: string;
-  name: string;
-  website: string;
-}
+import {PatientType, ApiErrorType, PatientsStateType} from '../../types'
 
-export type EditablePatientFields = Pick<
-  Patient,
-  'name' | 'avatar' | 'description' | 'website'
->;
-
-export interface ApiError {
-  message: string;
-}
-
-export interface PatientsState {
-  patients: Patient[];
-  loading: boolean;
-  error: ApiError | null;
-}
-
-const initialState: PatientsState = {
+const initialState: PatientsStateType = {
   patients: [],
   loading: false,
   error: null,
@@ -38,11 +15,11 @@ const patientsSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchPatientsSuccess: (state, action: PayloadAction<Patient[]>) => {
+    fetchPatientsSuccess: (state, action: PayloadAction<PatientType[]>) => {
       state.loading = false;
       state.patients = action.payload;
     },
-    fetchPatientsFailure: (state, action: PayloadAction<ApiError>) => {
+    fetchPatientsFailure: (state, action: PayloadAction<ApiErrorType>) => {
       state.loading = false;
       state.error = action.payload;
     },
